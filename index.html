@@ -25,8 +25,275 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+          <h1>React</h1>
+					<p>React is a JavaScript library for developing user interfaces.</p>
+        </section>
+        <section>
+          <section>
+            <h2>Components are the foundation of everything</h2>
+          </section>
+          <section>
+            <pre><code class="hljs">function Button (props) {
+  // Returns the DOM element. For instance:
+  return &lt;button type="submit"&gt;{props.label}&lt;/button&gt;;
+}
+// Draw the Button component in the browser
+ReactDOM.render(&lt;Button label="Save" /&gt;, mountNode)</code></pre>
+          </section>
+				</section>
+				<section>
+          <section>
+            <h2>JSX</h2>
+          </section>
+          <section>
+            <p>Without JSX</p>
+            <pre><code class="hljs">function Button (props) {
+  return React.createElement(
+    "button",
+    { type: "submit" },
+    props.label
+  );
+}
+// To use Button you have to write something like this
+ReactDOM.render(
+  React.createElement(Button, { label: "Save" }),
+  mountNode
+);</code></pre>
+          </section>
+          <section>
+            <p>The createElement function</p>
+            <pre><code class="hljs">const InputForm = React.createElement(
+  "form",
+  { target: "_blank", action: "https://google.com/search" },
+  React.createElement("div", null, "Enter input and click Search"),
+  React.createElement("input", { className: "big-input" }),
+  React.createElement(Button, { label: "Search" })
+);
+// InputForm uses the Button component, so we need to define it:
+function Button (props) {
+  return React.createElement(
+    "button",
+    { type: "submit" },
+    props.label
+  );
+}
+// After that we can use InputForm to pass to the render function
+ReactDOM.render(InputForm, mountNode);</code></pre>
+          </section>
+          <section>
+            <p>With JSX</p>
+            <pre><code class="hljs">const InputForm =
+  &lt;form target="_blank" action="https://google.com/search"&gt;
+    &lt;div&gt;Enter input and click Search&lt;/div&gt;
+    &lt;input className="big-input" name="q" /&gt;
+    &lt;Button label="Search" /&gt;
+  &lt;/form&gt;;
+// InputForm is still using the Button component,
+// so we need to define it.
+// This can be done either using JSX or using createElement
+function Button (props) {
+  // Returns the DOM element. For instance:
+  return &lt;button type="submit"&gt;{props.label}&lt;/button&gt;;
+}
+// After that we can use InputForm to pass to the render function
+ReactDOM.render(InputForm, mountNode);</code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>JavaScript expressions can be used anywhere in JSX</h2>
+            <pre><code class="hljs">const RandomValue = () =&gt;
+  &lt;div&gt;
+    { Math.floor(Math.random() * 100) }
+  &lt;/div&gt;;
+ReactDOM.render(&lt;RandomValue /&gt;, mountNode);</code></pre>
+          </section>
+          <section>
+            <pre><code class="hljs">const ErrorDisplay = ({message}) =&gt;
+  &lt;div style={ { color: 'red', backgroundColor: 'yellow' } }&gt;
+    {message}
+  &lt;/div&gt;;
+ReactDOM.render(
+  &lt;ErrorDisplay
+    message="These aren't the droids you're looking for"
+  /&gt;,
+  mountNode
+);</code></pre>
+          </section>
+          <section>
+            <pre><code class="hljs">const MaybeError = ({errorMessage}) =&gt;
+  &lt;div&gt;
+    {errorMessage && &lt;ErrorDisplay message={errorMessage} /&gt;}
+  &lt;/div&gt;;
+
+// The MaybeError component uses the ErrorDisplay component:
+const ErrorDisplay = ({message}) =&gt;
+  &lt;div style={ { color: 'red', backgroundColor: 'yellow' } }&gt;
+    {message}
+  &lt;/div&gt;;
+// Now we can use the MaybeError component:
+ReactDOM.render(
+  &lt;MaybeError
+    errorMessage={Math.random() &gt; 0.5 ? 'Not good' : ''}
+  /&gt;,
+  mountNode
+);</code></pre>
+          </section>
+          <section>
+            <pre><code class="hljs">const Doubler = ({value=[1, 2, 3]}) =&gt;
+  &lt;div&gt;
+    {value.map(e =&gt; e * 2)}
+  &lt;/div&gt;;
+ReactDOM.render(&lt;Doubler /&gt;, mountNode);</code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>You can develop components using JavaScript classes</h2>
+            <pre><code class="hljs">class Button extends React.Component {
+  render() {
+    return &lt;button&gt;{this.props.label}&lt;/button&gt;;
+  }
+}
+ReactDOM.render(&lt;Button label="Save" /&gt;, mountNode);</code></pre>
+          </section>
+          <section>
+            <pre><code class="hljs">class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    this.id = Date.now();
+  }
+  render() {
+    return &lt;button id={this.id}&gt;{this.props.label}&lt;/button&gt;;
+  }
+}
+ReactDOM.render(&lt;Button label="Save" /&gt;, mountNode);</code></pre>
+          </section>
+          <section>
+            <pre><code class="hljs">class Button extends React.Component {
+  clickCounter = 0;
+handleClick = () =&gt; {
+    console.log(`Clicked: ${++this.clickCounter}`);
+  };
+
+  render() {
+    return (
+      &lt;button id={this.id} onClick={this.handleClick}&gt;
+        {this.props.label}
+      &lt;/button&gt;
+    );
+  }
+}
+ReactDOM.render(&lt;Button label="Save" /&gt;, mountNode);</code></pre>
+          </section>
+        </section>
+        <section>
+          <h2>Events</h2>
+          <pre><code class="hljs">class Form extends React.Component {
+  handleSubmit = (event) =&gt; {
+    event.preventDefault();
+    console.log('Form submitted');
+  };
+
+  render() {
+    return (
+      &lt;form onSubmit={this.handleSubmit}&gt;
+        &lt;button type="submit"&gt;Submit(&lt;/button&gt;
+      &lt;/form&gt;
+    );
+  }
+}
+ReactDOM.render(&lt;Form /&gt;, mountNode);</code></pre>
+        </section>
+        <section>
+          <section>
+            <h2>Component life cycle.<br>Start</h2>
+          </section>
+          <section>
+            <ul>
+              <li>A React pattern is defined to create elements from a component.</li>
+              <li>It is indicated where it will be used.</li>
+              <li>The react creates an instance of the element and passes it a set of properties (props), access to which will be available through this.props.</li>
+              <li>The class constructor method is called.</li>
+            </ul>
+          </section>
+          <section>
+            <ul>
+              <li>React processes the result of calling the render function.</li>
+              <li>Component mount.</li>
+              <li>Call componentDidMount method.</li>
+              <li>Before unmounting, the componentWillUnmount method is called.</li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Components have an internal state</h2>
+          </section>
+          <section>
+            <pre><code class="hljs">class CounterButton extends React.Component {
+  state = {
+    clickCounter: 0,
+    currentTimestamp: new Date(),
+  };
+
+  handleClick = () =&gt; {
+    this.setState((prevState) =&gt; {
+      return { clickCounter: prevState.clickCounter + 1 };
+    });
+  };
+
+  componentDidMount() {
+    setInterval(() =&gt; {
+      this.setState({ currentTimestamp: new Date() })
+    }, 1000);
+  }
+
+  render() {
+    return (
+      &lt;div&gt;
+        &lt;button onClick={this.handleClick}&gt;Click&lt;/button&gt;
+        &lt;p&gt;Clicked: {this.state.clickCounter}&lt;/p&gt;
+        &lt;p&gt;Time: {this.state.currentTimestamp.toLocaleString()}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+ReactDOM.render(&lt;CounterButton /&gt;, mountNode)</code></pre>
+          </section>
+        </section>
+        <section>
+          <h2>Reactivity</h2>
+        </section>
+        <section>
+          <h2>React as an intermediary</h2>
+        </section>
+        <section>
+          <section>
+            <h2>Component life cycle.<br>The end</h2>
+          </section>
+          <section>
+            <ul>
+              <li>A component may need to be re-rendered if its state is updated, or if the parent element changes its properties.</li>
+              <li>If properties have been changed, React will call the componentWillReceiveProps lifecycle method.</li>
+              <li>If an object or its properties have been changed, React calls another method - shouldComponentUpdate.</li>
+            </ul>
+          </section>
+          <section>
+            <ul>
+              <li>If shouldComponentUpdate is not declared, React will call an unconditional componentWillUpdate.</li>
+              <li>If no changes are committed, React will do nothing.</li>
+              <li>If there is a difference, the framework will draw the component.</li>
+              <li>Since the update process has occurred anyway, React will call the componentDidUpdate method.</li>
+            </ul>
+          </section>
+        </section>
+        <section>
+          <p>You can find more information about React on the official site <a href="http://reactjs.org" target="_blank">reactjs.org</a></p>
+        </section>
+
+
 			</div>
 		</div>
 
